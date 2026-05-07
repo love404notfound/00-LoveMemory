@@ -11,7 +11,7 @@ export const coupleData: CoupleData = {
     nickname: 'Tian',
     avatar: '',
   },
-  anniversary: new Date('201 6-09-03T00:08:00'),
+  anniversary: new Date('2016-09-03T00:08:00'),
   sinceLabel: '从相识到现在',
   tagline: '两颗心，一个世界',
   stats: {

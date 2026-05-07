@@ -28,8 +28,14 @@ const dims = computed(() => {
   const vw = viewportWidth.value
   if (vw < 480) return { r: 140, len: 90, h: 80 }
   if (vw < 768) return { r: 220, len: 150, h: 140 }
-  return { r: 320, len: 220, h: 200 }
+  // Proportional scaling: r ≈ vw * 0.27, matching 220 at 768px
+  const r = Math.min(vw * 0.27, 520)
+  const ratio = r / 220
+  return { r, len: 150 * ratio, h: 140 * ratio }
 })
+
+/** Perspective depth scales with viewport for consistent 3D feel */
+const perspective = computed(() => Math.min(dims.value.r * 5, 3000))
 
 function getFaceStyle(i: number) {
   const { r, len, h } = dims.value
@@ -112,7 +118,8 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="perspective-[1200px] flex justify-center items-center py-6 select-none cursor-pointer"
+    class="flex justify-center items-center py-6 select-none cursor-pointer"
+    :style="{ perspective: `${perspective}px` }"
     @mouseenter="stopTimer"
     @mouseleave="startTimer"
   >

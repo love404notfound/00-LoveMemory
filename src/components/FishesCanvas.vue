@@ -179,8 +179,9 @@ function controlStatus() {
 }
 
 function renderFish(context: CanvasRenderingContext2D, fish: FishObj) {
-  // Match original: use parent's current fillStyle (set in render() before calling)
-  // No gradient, no fillStyle override in the original
+  // Scale fish body with canvas width so visual proportion stays consistent
+  // Reference: fish body = 70px at 1200px canvas width (5.8% of width)
+  const s = width / 1200
 
   context.save()
   context.translate(fish.x, fish.y)
@@ -189,34 +190,34 @@ function renderFish(context: CanvasRenderingContext2D, fish: FishObj) {
 
   // Fish body
   context.beginPath()
-  context.moveTo(-30, 0)
-  context.bezierCurveTo(-20, 15, 15, 10, 40, 0)
-  context.bezierCurveTo(15, -10, -20, -15, -30, 0)
+  context.moveTo(-30 * s, 0)
+  context.bezierCurveTo(-20 * s, 15 * s, 15 * s, 10 * s, 40 * s, 0)
+  context.bezierCurveTo(15 * s, -10 * s, -20 * s, -15 * s, -30 * s, 0)
   context.closePath()
   context.fill()
 
   // Tail fin
   context.save()
-  context.translate(40, 0)
+  context.translate(40 * s, 0)
   context.scale(0.9 + 0.2 * Math.sin(fish.theta), 1)
   context.beginPath()
   context.moveTo(0, 0)
-  context.quadraticCurveTo(5, 10, 20, 8)
-  context.quadraticCurveTo(12, 5, 10, 0)
-  context.quadraticCurveTo(12, -5, 20, -8)
-  context.quadraticCurveTo(5, -10, 0, 0)
+  context.quadraticCurveTo(5 * s, 10 * s, 20 * s, 8 * s)
+  context.quadraticCurveTo(12 * s, 5 * s, 10 * s, 0)
+  context.quadraticCurveTo(12 * s, -5 * s, 20 * s, -8 * s)
+  context.quadraticCurveTo(5 * s, -10 * s, 0, 0)
   context.closePath()
   context.fill()
   context.restore()
 
   // Dorsal fin
   context.save()
-  context.translate(-3, 0)
+  context.translate(-3 * s, 0)
   context.rotate(Math.PI / 3 + (Math.PI / 10) * Math.sin(fish.phi))
   context.beginPath()
-  context.moveTo(-5, 0)
-  context.bezierCurveTo(-10, -10, -10, -30, 0, -40)
-  context.bezierCurveTo(12, -25, 8, -10, 0, 0)
+  context.moveTo(-5 * s, 0)
+  context.bezierCurveTo(-10 * s, -10 * s, -10 * s, -30 * s, 0, -40 * s)
+  context.bezierCurveTo(12 * s, -25 * s, 8 * s, -10 * s, 0, 0)
   context.closePath()
   context.fill()
   context.restore()
