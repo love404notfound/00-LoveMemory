@@ -1,0 +1,236 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #ff6b81;
+  --color-secondary: #a29bfe;
+  --color-accent: #fd79a8;
+  --color-bg: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-text: #2d3436;
+  --color-text-secondary: #636e72;
+}
+
+@layer base {
+  .page-fade-enter-active,
+  .page-fade-leave-active {
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .page-fade-enter-from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .page-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  .animate-hidden {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .animate-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+  }
+
+  .sakura {
+    pointer-events: none;
+    position: absolute;
+  }
+}
+
+@keyframes fall {
+  0% {
+    opacity: 0.9;
+    top: 0;
+  }
+  100% {
+    opacity: 0.2;
+    top: 100%;
+  }
+}
+
+@keyframes blow-soft-left {
+  0% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: -50%;
+  }
+}
+
+@keyframes blow-medium-left {
+  0% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: -100%;
+  }
+}
+
+@keyframes blow-soft-right {
+  0% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: 50%;
+  }
+}
+
+@keyframes blow-medium-right {
+  0% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: 100%;
+  }
+}
+
+@keyframes sway-0 {
+  0% {
+    transform: rotate(-5deg);
+  }
+  40% {
+    transform: rotate(28deg);
+  }
+  100% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes sway-1 {
+  0% {
+    transform: rotate(10deg);
+  }
+  40% {
+    transform: rotate(43deg);
+  }
+  100% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes sway-2 {
+  0% {
+    transform: rotate(15deg);
+  }
+  40% {
+    transform: rotate(56deg);
+  }
+  100% {
+    transform: rotate(22deg);
+  }
+}
+
+@keyframes sway-3 {
+  0% {
+    transform: rotate(25deg);
+  }
+  40% {
+    transform: rotate(74deg);
+  }
+  100% {
+    transform: rotate(37deg);
+  }
+}
+
+@keyframes sway-4 {
+  0% {
+    transform: rotate(40deg);
+  }
+  40% {
+    transform: rotate(68deg);
+  }
+  100% {
+    transform: rotate(25deg);
+  }
+}
+
+@keyframes sway-5 {
+  0% {
+    transform: rotate(50deg);
+  }
+  40% {
+    transform: rotate(78deg);
+  }
+  100% {
+    transform: rotate(40deg);
+  }
+}
+
+@keyframes sway-6 {
+  0% {
+    transform: rotate(65deg);
+  }
+  40% {
+    transform: rotate(92deg);
+  }
+  100% {
+    transform: rotate(58deg);
+  }
+}
+
+@keyframes sway-7 {
+  0% {
+    transform: rotate(72deg);
+  }
+  40% {
+    transform: rotate(118deg);
+  }
+  100% {
+    transform: rotate(68deg);
+  }
+}
+
+@keyframes sway-8 {
+  0% {
+    transform: rotate(94deg);
+  }
+  40% {
+    transform: rotate(136deg);
+  }
+  100% {
+    transform: rotate(82deg);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Wave divider */
+@keyframes wave-1 {
+  0% { transform: translateX(-85px); }
+  100% { transform: translateX(85px); }
+}
+@keyframes wave-2 {
+  0% { transform: translateX(-65px); }
+  100% { transform: translateX(65px); }
+}
+@keyframes wave-3 {
+  0% { transform: translateX(-50px); }
+  100% { transform: translateX(50px); }
+}
+@keyframes wave-4 {
+  0% { transform: translateX(-35px); }
+  100% { transform: translateX(35px); }
+}
+
+.wave-layer-1 { animation: wave-1 7s ease-in-out infinite alternate; }
+.wave-layer-2 { animation: wave-2 5.5s ease-in-out infinite alternate; }
+.wave-layer-3 { animation: wave-3 4s ease-in-out infinite alternate; }
+.wave-layer-4 { animation: wave-4 2.5s ease-in-out infinite alternate; }
