@@ -15,6 +15,7 @@ const isManualRotating = ref(false)
 let timer: ReturnType<typeof setInterval> | null = null
 
 const viewportWidth = ref(window.innerWidth)
+const isMobile = computed(() => viewportWidth.value < 768)
 function onResize() {
   viewportWidth.value = window.innerWidth
 }
@@ -26,8 +27,10 @@ function onResize() {
 //   h   = face height
 const dims = computed(() => {
   const vw = viewportWidth.value
-  if (vw < 480) return { r: 140, len: 90, h: 80 }
-  if (vw < 768) return { r: 220, len: 150, h: 140 }
+  // if (vw < 480) return { r: 140, len: 90, h: 80 }
+  // if (vw < 768) return { r: 220, len: 150, h: 140 }
+  if (vw < 480) return { r: 280, len: 180, h: 160 }
+  if (vw < 768) return { r: 440, len: 300, h: 280 }
   // Proportional scaling: r ≈ vw * 0.27, matching 220 at 768px
   const r = Math.min(vw * 0.27, 520)
   const ratio = r / 220
@@ -37,15 +40,21 @@ const dims = computed(() => {
 /** Perspective depth scales with viewport for consistent 3D feel */
 const perspective = computed(() => Math.min(dims.value.r * 5, 3000))
 
+/** Reflection height as a fraction of image height */
+const REFLECT_RATIO = 0.35
+/** Gap between image and reflection (px) */
+const REFLECT_GAP = 5
+
 function getFaceStyle(i: number) {
   const { r, len, h } = dims.value
   const a = r * Math.cos(Math.PI / 6) // apothem
+  const totalH = h + REFLECT_GAP + h * REFLECT_RATIO
   return {
     transform: `rotateY(${i * 60}deg) translateZ(${a}px)`,
     width: `${len}px`,
-    height: `${h}px`,
+    height: `${totalH}px`,
     marginLeft: `${-len / 2}px`,
-    marginTop: `${-h / 2}px`,
+    marginTop: `${-totalH / 2}px`,
   }
 }
 
@@ -59,7 +68,7 @@ const transitionDuration = ref(600)
 
 function getShortestRotation(targetFaceIndex: number): number {
   const f = frontIndex.value
-  const N = ((f - targetFaceIndex) % 6 + 6) % 6 // clockwise steps to bring target to front
+  const N = (((f - targetFaceIndex) % 6) + 6) % 6 // clockwise steps to bring target to front
   return N > 3 ? N - 6 : N
 }
 
@@ -118,7 +127,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="flex justify-center items-center py-6 select-none cursor-pointer"
+    class="flex justify-center items-center py-6 max-md:fixed max-md:inset-x-0 max-md:top-14 max-md:bottom-[max(25vh,200px)] max-md:py-0 select-none cursor-pointer"
     :style="{ perspective: `${perspective}px` }"
     @mouseenter="stopTimer"
     @mouseleave="startTimer"
@@ -135,7 +144,7 @@ onUnmounted(() => {
       <div
         class="transform-3d absolute left-1/2 top-1/2"
         :style="{
-          transform: `translate(-50%, -50%) rotateX(-20deg) rotateY(${currentAngle}deg)`,
+          transform: `translate(-50%, -50%) rotateX(${isMobile ? 0 : -20}deg) rotateY(${currentAngle}deg)`,
           transition: `transform ${transitionDuration}ms ease-out`,
         }"
         @transitionend="onTransitionEnd"
@@ -151,17 +160,36 @@ onUnmounted(() => {
           :style="getFaceStyle(i)"
           @click="handleFaceClick(i)"
         >
-          <img
-            :src="item.src"
-            :alt="item.title"
-            class="w-full h-full object-cover"
-            draggable="false"
-            loading="eager"
-          />
+          <!-- Main image area -->
+          <div class="relative" :style="{ height: dims.h + 'px' }">
+            <img
+              :src="item.src"
+              :alt="item.title"
+              class="w-full h-full object-cover"
+              draggable="false"
+              loading="eager"
+            />
+            <div
+              class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2"
+            >
+              <p class="text-white text-xs text-center truncate">{{ item.title }}</p>
+            </div>
+          </div>
+          <!-- Gap between image and reflection (water surface) -->
+          <div :style="{ height: REFLECT_GAP + 'px' }" />
+          <!-- Water reflection area -->
           <div
-            class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2"
+            class="relative overflow-hidden"
+            :style="{ height: Math.round(dims.h * REFLECT_RATIO) + 'px' }"
           >
-            <p class="text-white text-xs text-center truncate">{{ item.title }}</p>
+            <img
+              :src="item.src"
+              class="w-full object-cover scale-y-[-1] blur-sm"
+              :style="{ height: dims.h + 'px' }"
+              draggable="false"
+              aria-hidden="true"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/80" />
           </div>
         </div>
       </div>

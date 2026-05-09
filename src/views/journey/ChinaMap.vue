@@ -51,8 +51,13 @@ onUnmounted(() => {
       v-if="loadingState === 'loading'"
       class="absolute inset-0 z-1000 flex items-center justify-center bg-white"
     >
-      <div class="flex flex-col items-center gap-3">
-        <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div class="flex flex-col items-center gap-4">
+        <div class="relative w-24 h-24 flex items-center justify-center">
+          <span class="heart-ripple-ring heart-ripple-1">❤</span>
+          <span class="heart-ripple-ring heart-ripple-2">❤</span>
+          <span class="heart-ripple-ring heart-ripple-3">❤</span>
+          <span class="relative text-3xl text-primary animate-pulse">❤</span>
+        </div>
         <span class="text-sm text-text-secondary">加载地图...</span>
       </div>
     </div>

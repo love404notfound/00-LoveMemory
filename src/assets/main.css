@@ -295,3 +295,43 @@
 .leaflet-tooltip.city-tooltip::before {
   display: none;
 }
+
+/* Heart ripple loading animation */
+@keyframes heart-ripple {
+  0% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.5);
+  }
+}
+
+.heart-ripple-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  font-size: 24px;
+  line-height: 1;
+  color: #ff6b81;
+  will-change: transform, opacity;
+}
+
+.heart-ripple-1 {
+  animation: heart-ripple 2.4s ease-out infinite;
+  animation-delay: 0s;
+}
+
+.heart-ripple-2 {
+  animation: heart-ripple 2.4s ease-out infinite;
+  animation-delay: 0.8s;
+}
+
+.heart-ripple-3 {
+  animation: heart-ripple 2.4s ease-out infinite;
+  animation-delay: 1.6s;
+}
+
+
