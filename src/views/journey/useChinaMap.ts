@@ -3,7 +3,8 @@ import L from 'leaflet'
 import type { FeatureCollection } from 'geojson'
 import type { MapLoadingState, JourneyCity } from '@/types'
 
-const GEOJSON_URL = 'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json'
+// Local copy of DataV China provinces GeoJSON — avoids CORS / network issues on GitHub Pages
+const GEOJSON_URL = `${import.meta.env.BASE_URL}china-geo.json`
 const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const TILE_ATTR = '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
 
