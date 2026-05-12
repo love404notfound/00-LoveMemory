@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { useCoupleStore } from '@/stores/couple'
 import PageHeader from '@/components/PageHeader.vue'
+import { storyMilestones } from '@/data/story'
 import Timeline from './Timeline.vue'
-
-const couple = useCoupleStore()
 </script>
 
 <template>
@@ -20,7 +18,7 @@ const couple = useCoupleStore()
       </p>
     </section>
     <section class="mx-auto max-w-5xl pb-8">
-      <Timeline :milestones="couple.story" />
+      <Timeline :milestones="storyMilestones" />
     </section>
   </div>
 </template>

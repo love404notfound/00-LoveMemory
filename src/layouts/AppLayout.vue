@@ -1,24 +1,32 @@
 <script setup lang="ts">
-import { watchEffect } from 'vue'
+import { defineAsyncComponent, onMounted, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import HeaderNav from '@/components/HeaderNav.vue'
-import SakuraPetals from '@/components/SakuraPetals.vue'
-import FishesCanvas from '@/components/FishesCanvas.vue'
 import { useCoupleStore } from '@/stores/couple'
+
+const SakuraPetals = defineAsyncComponent(() => import('@/components/SakuraPetals.vue'))
+const FishesCanvas = defineAsyncComponent(() => import('@/components/FishesCanvas.vue'))
 
 const couple = useCoupleStore()
 const route = useRoute()
+const showDecorations = ref(false)
 
 watchEffect(() => {
   const pageTitle = typeof route.meta.title === 'string' ? route.meta.title : '我们的故事'
   document.title = `LoveMemory - ${pageTitle}`
+})
+
+onMounted(() => {
+  window.requestAnimationFrame(() => {
+    showDecorations.value = true
+  })
 })
 </script>
 
 <template>
   <div class="romantic-shell relative min-h-screen flex flex-col bg-page">
     <div class="relative z-10 flex flex-col min-h-screen">
-      <SakuraPetals />
+      <SakuraPetals v-if="showDecorations" />
       <HeaderNav />
       <main class="flex-1 pt-20 md:pt-24">
         <RouterView v-slot="{ Component }">
@@ -28,7 +36,7 @@ watchEffect(() => {
         </RouterView>
       </main>
       <div class="relative mt-10 h-[28dvh] min-h-[220px] max-h-[360px] overflow-hidden">
-        <FishesCanvas />
+        <FishesCanvas v-if="showDecorations" />
         <div class="absolute inset-0 bg-gradient-to-t from-primary/35 via-primary/5 to-transparent" />
         <footer
           class="absolute inset-x-0 bottom-0 z-10 px-4 py-8 text-center text-white sm:px-6"

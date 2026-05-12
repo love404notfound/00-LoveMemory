@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import PageHeader from '@/components/PageHeader.vue'
 import { useCoupleStore } from '@/stores/couple'
+import { playlistTracks } from '@/data/playlist'
 
 const couple = useCoupleStore()
+const moodCount = computed(() => new Set(playlistTracks.map((track) => track.mood)).size)
 </script>
 
 <template>
@@ -24,7 +27,7 @@ const couple = useCoupleStore()
         </div>
         <div class="grid gap-3 sm:grid-cols-3">
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-5 text-center">
-            <p class="text-3xl font-semibold text-primary">{{ couple.playlist.length }}</p>
+            <p class="text-3xl font-semibold text-primary">{{ playlistTracks.length }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Tracks</p>
           </div>
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-5 text-center">
@@ -32,9 +35,7 @@ const couple = useCoupleStore()
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Shared</p>
           </div>
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-5 text-center">
-            <p class="text-3xl font-semibold text-primary">
-              {{ new Set(couple.playlist.map((track) => track.mood)).size }}
-            </p>
+            <p class="text-3xl font-semibold text-primary">{{ moodCount }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Moods</p>
           </div>
         </div>
@@ -43,7 +44,7 @@ const couple = useCoupleStore()
 
     <section class="mx-auto max-w-5xl space-y-4">
       <article
-        v-for="track in couple.playlist"
+        v-for="track in playlistTracks"
         :key="track.id"
         class="section-card rounded-[1.75rem] p-5 md:p-6"
       >

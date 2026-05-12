@@ -57,3 +57,20 @@
 
 - 网站不再是“半成品演示”，而是一版可以继续打磨和持续填充内容的恋爱纪念站。
 - 后续替换文字、图片、日期时，优先在 `src/data/couple.ts`、`src/data/story.ts`、`src/data/gallery.ts`、`src/data/journey.ts`、`src/data/playlist.ts` 中维护。
+
+## 本轮性能优化补充
+
+- 目标：在不改现有页面结构的前提下，缩短首页首加载时间，优先优化首屏必须下载、解析和执行的资源。
+- 已确认的问题：
+  - 首页共享 `couple store` 里提前引入了故事、相册、旅程、歌单全部数据，放大了首屏共享 JS chunk。
+  - 根布局首屏就挂载了樱花和鱼群装饰，增加了非必要的首屏脚本执行与动画开销。
+  - `index.html` 同步加载 `sakura.min.js`，会阻塞首屏脚本链路。
+  - 全局背景图 `src/assets/background.jpg` 体积偏大，且使用了 `background-attachment: fixed`。
+  - Google Fonts 通过 CSS `@import` 进入关键渲染路径，会额外增加字体请求等待。
+- 本轮处理方向：
+  - 首页共享 store 只保留首页和全局布局必需的 `coupleData`。
+  - 各内容页改为就近引入各自的数据源，恢复路由级数据拆分。
+  - 樱花脚本改为组件内异步加载，移出 `index.html` 首屏阻塞链路。
+  - 装饰组件改为异步组件，并延后到首屏渲染之后或进入视口后再挂载。
+  - 背景图改用更轻量的 WebP 资源，并移除固定背景附着带来的额外渲染成本。
+  - Google Fonts 从 CSS `@import` 调整为 HTML 中的预连接和非阻塞加载。

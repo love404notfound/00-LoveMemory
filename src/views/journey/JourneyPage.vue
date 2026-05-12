@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { useCoupleStore } from '@/stores/couple'
+import { computed } from 'vue'
+import { journeyCities } from '@/data/journey'
 import ChinaMap from './ChinaMap.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import JourneyMoments from './JourneyMoments.vue'
 
-const couple = useCoupleStore()
+const regionCount = computed(() => new Set(journeyCities.map((city) => city.province)).size)
+const latestCity = computed(() => journeyCities[journeyCities.length - 1]?.name ?? '待补充')
 </script>
 
 <template>
@@ -26,19 +28,15 @@ const couple = useCoupleStore()
         </div>
         <div class="grid grid-cols-3 gap-3 text-center">
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-5">
-            <p class="text-3xl font-semibold text-primary">{{ couple.journey.length }}</p>
+            <p class="text-3xl font-semibold text-primary">{{ journeyCities.length }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Cities</p>
           </div>
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-5">
-            <p class="text-3xl font-semibold text-primary">
-              {{ new Set(couple.journey.map((city) => city.province)).size }}
-            </p>
+            <p class="text-3xl font-semibold text-primary">{{ regionCount }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Regions</p>
           </div>
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-5">
-            <p class="text-3xl font-semibold text-primary">
-              {{ couple.journey[couple.journey.length - 1]?.name }}
-            </p>
+            <p class="text-3xl font-semibold text-primary">{{ latestCity }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Latest</p>
           </div>
         </div>
@@ -46,7 +44,7 @@ const couple = useCoupleStore()
     </section>
 
     <section class="mx-auto max-w-6xl">
-      <ChinaMap :cities="couple.journey" />
+      <ChinaMap :cities="journeyCities" />
     </section>
 
     <section class="mx-auto mt-8 max-w-6xl">
@@ -54,7 +52,7 @@ const couple = useCoupleStore()
         <p class="text-xs uppercase tracking-[0.35em] text-primary/70">Moments on the road</p>
         <h2 class="section-title mt-4 font-semibold text-text">每座城市都有一句备注</h2>
       </div>
-      <JourneyMoments :cities="couple.journey" />
+      <JourneyMoments :cities="journeyCities" />
     </section>
   </div>
 </template>

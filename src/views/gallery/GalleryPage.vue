@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useCoupleStore } from '@/stores/couple'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { galleryItems } from '@/data/gallery'
 import HexagonCarousel from './HexagonCarousel.vue'
 import PhotoModal from './PhotoModal.vue'
 import StaggerFadeIn from '@/components/StaggerFadeIn.vue'
@@ -9,14 +9,30 @@ import GalleryMasonry from './GalleryMasonry.vue'
 import MobileGalleryCarousel from './MobileGalleryCarousel.vue'
 import type { GalleryItem } from '@/types'
 
-const couple = useCoupleStore()
+const gallery = galleryItems
 const selectedItem = ref<GalleryItem | null>(null)
+const featuredCount = computed(() => gallery.filter((item) => item.featured).length)
+const themeCount = computed(() => new Set(gallery.map((item) => item.category)).size)
+let idleCallbackId: number | null = null
+let preloadTimer: ReturnType<typeof setTimeout> | null = null
 
-// Preload all gallery images into browser cache so modal opens instantly
-couple.gallery.forEach((item) => {
-  const img = new Image()
-  img.src = item.src
-})
+function preloadGalleryImages() {
+  gallery.forEach((item) => {
+    const img = new Image()
+    img.src = item.src
+  })
+}
+
+function cancelPendingPreload() {
+  if (idleCallbackId !== null && 'cancelIdleCallback' in window) {
+    window.cancelIdleCallback(idleCallbackId)
+    idleCallbackId = null
+  }
+  if (preloadTimer) {
+    clearTimeout(preloadTimer)
+    preloadTimer = null
+  }
+}
 
 function onSelect(item: GalleryItem) {
   selectedItem.value = item
@@ -25,6 +41,25 @@ function onSelect(item: GalleryItem) {
 function onCloseModal() {
   selectedItem.value = null
 }
+
+onMounted(() => {
+  if ('requestIdleCallback' in window) {
+    idleCallbackId = window.requestIdleCallback(() => {
+      idleCallbackId = null
+      preloadGalleryImages()
+    })
+    return
+  }
+
+  preloadTimer = setTimeout(() => {
+    preloadTimer = null
+    preloadGalleryImages()
+  }, 500)
+})
+
+onUnmounted(() => {
+  cancelPendingPreload()
+})
 </script>
 
 <template>
@@ -46,19 +81,15 @@ function onCloseModal() {
         </div>
         <div class="grid grid-cols-3 gap-3 text-center">
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-4">
-            <p class="text-3xl font-semibold text-primary">{{ couple.gallery.length }}</p>
+            <p class="text-3xl font-semibold text-primary">{{ gallery.length }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Moments</p>
           </div>
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-4">
-            <p class="text-3xl font-semibold text-primary">
-              {{ couple.gallery.filter((item) => item.featured).length }}
-            </p>
+            <p class="text-3xl font-semibold text-primary">{{ featuredCount }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Featured</p>
           </div>
           <div class="rounded-[1.5rem] bg-white/75 px-4 py-4">
-            <p class="text-3xl font-semibold text-primary">
-              {{ new Set(couple.gallery.map((item) => item.category)).size }}
-            </p>
+            <p class="text-3xl font-semibold text-primary">{{ themeCount }}</p>
             <p class="mt-2 text-xs uppercase tracking-[0.2em] text-text-secondary">Themes</p>
           </div>
         </div>
@@ -68,7 +99,7 @@ function onCloseModal() {
     <section class="mx-auto max-w-6xl pb-6">
       <div class="hidden md:block">
         <StaggerFadeIn :delay="0" :initial-delay="100">
-          <HexagonCarousel :items="couple.gallery" @select="onSelect" />
+          <HexagonCarousel :items="gallery" @select="onSelect" />
         </StaggerFadeIn>
       </div>
 
@@ -80,7 +111,7 @@ function onCloseModal() {
             横向滑动即可浏览，每张卡片都保留标题、地点与日期，让相册自然融入页面内容流。
           </p>
         </div>
-        <MobileGalleryCarousel :items="couple.gallery" @select="onSelect" />
+        <MobileGalleryCarousel :items="gallery" @select="onSelect" />
       </div>
     </section>
 
@@ -89,7 +120,7 @@ function onCloseModal() {
         <p class="text-xs uppercase tracking-[0.35em] text-primary/70">Gallery grid</p>
         <h2 class="section-title mt-4 font-semibold text-text">慢慢翻看的回忆相册</h2>
       </div>
-      <GalleryMasonry :items="couple.gallery" @select="onSelect" />
+      <GalleryMasonry :items="gallery" @select="onSelect" />
     </section>
 
     <PhotoModal v-if="selectedItem" :item="selectedItem" @close="onCloseModal" />
